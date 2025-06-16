@@ -30,7 +30,6 @@ Then this is the tool for you.
     - Python library: `pip install ollama`
 2. PC requirement
     - The specific PC requirements will depends on the model of your choice. Please refer to specific Ollama models for their requirements: https://ollama.com/search
-    - Device used for testing: Ryzen 9 6900HX 8C16T, 32GB, RTX 3060 12GB PCIe x4 4.0 (Oculink)
 
 **How this works?**
 
@@ -39,4 +38,50 @@ Then this is the tool for you.
 
 **Step 1: Run Ollama as a service**
 - `ollama serve` this will run Ollama on `localhost:11434`, allowing API access.
-- `python src/modules/ollama_commenter/ollama_commenter.py /path/to/code [--model model_name] [--ext .vue --ext .dart]`
+
+**Step 2:**
+- `python src/modules/ollama_commenter/ollama_commenter.py /path/to/code --model model_name`
+
+## Perfomance comparison
+
+Below are some models that was tested and evaluated.
+
+**Note:**
+- Some comparison criteria are subjective, one developer might consider a comment too detailed, while another developer might consider that same comment too oversimplified. 
+- Larger models will yield higher perfomance, but will requires more computation resources. Some models will requires at least 200+ GB of RAM or they outright refuses to start. Pick the one that your machine can run.
+
+### Comparison 
+
+| Model                     | Code Understanding | Comment Quality | Latency | VRAM Uasge |
+|---------------------------|--------------------|-----------------|---------|------------|
+| Deepseek-R1:70b           |                    |                 |         |            |
+| Deepseek-R1:8b            |                    |                 |         |            |
+| Devstral:24b              |                    |                 |         |            |
+| Qwen2.5-coder:32b         |                    |                 |         |            |
+| Codellama:70b             |                    |                 |         |            |
+| Deepseek-coder-v2:16b     |                    |                 |         |            |
+| Web-based Deekseek        |                    |                 | NA      | NA         |
+| Web-based ChatGPT         |                    |                 | NA      | NA         |
+| Web-based Grok            |                    |                 | NA      | NA         |
+
+Code Understanding and Comment Quality is my subjective evaluation
+
+Also compare the performance against 3 popular web-based LLM: Deepseek, ChatGPT and Grok.
+
+### Criteria explanation
+
+**1. Code Understanding**
+- Correctness: Does the comment accurately explain the code's functionality?
+- Depth: Does it capture subtle logic, edge cases, and algorithmic complexity?
+- Context Awareness: Does it understand project-specific patterns or idioms?
+
+**2. Comment Quality**
+- Clarity: Are explanations easy to understand?
+- Conciseness: Avoids verbosity while being informative (measure comment-to-code ratio)
+- Relevance: Focuses on non-obvious aspects (e.g., explains why more than what)
+- Formatting: Proper syntax, placement, and structure for the language
+
+**3. Latency**
+- Time from request to completed output, lower is better
+
+
