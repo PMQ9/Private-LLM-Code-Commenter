@@ -1,129 +1,104 @@
-import os
 import argparse
-import ollama
-from pathlib import Path
-import mimetypes
+import requests
+import json
+import os
+import time
 
-def is_text_file(filepath):
-    """Check if a file is text-based using mimetypes and extension."""
-    # First check by mimetype
-    mime = mimetypes.guess_type(filepath)[0]
-    if mime and mime.startswith('text/'):
-        return True
-    
-    # Check common source file extensions
-    source_extensions = {'.c', '.h', '.cpp', '.hpp', '.py', '.java', 
-                         '.js', '.ts', '.html', '.css', '.php', '.rb',
-                         '.go', '.rs', '.swift', '.kt', '.m', '.cs', 
-                         '.sh', '.pl', '.lua', '.sql', '.json', '.xml'}
-    return Path(filepath).suffix.lower() in source_extensions
+def read_file(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            return file.read()
+    except Exception as e:
+        print(f"Error reading file: {e}")
+        exit(1)
 
-def process_with_ollama(content, model="devtral"):
-    """Send content to local Ollama for commenting using the Python library."""
-    prompt = (
-        "Add detailed comments to explain this code. "
-        "Do NOT modify any existing code. Only add comments. "
-        "Preserve all original formatting exactly. "
-        "Output ONLY the commented code with no additional text:\n\n"
-        f"{content}"
+def check_model_available(model_name):
+    try:
+        response = requests.get("http://localhost:11434/api/tags")
+        response.raise_for_status()
+        models = [m["name"] for m in response.json().get("models", [])]
+        return any(model_name in m for m in models)
+    except Exception as e:
+        print(f"Model check error: {e}")
+        return False
+
+def generate_comments(code, model_name, file_extension):
+    """Sends code to Ollama for comment generation."""
+    # System prompt to ensure only comments are added
+    system_prompt = (
+        "You are a code documentation assistant. Your task is to add CLEAR, CONCISE inline comments "
+        "to explain the code. Do NOT:\n"
+        "1. Modify any existing code\n"
+        "2. Add or remove any existing lines of code\n"
+        "3. Add comments that state the obvious\n"
+        "4. Change code formatting\n"
+        "5. Write comments outside code blocks\n"
+        "Format rules:\n"
+        f"- For .{file_extension} files: Use appropriate comment syntax\n"
+        "- Place comments ABOVE relevant lines\n"
+        "- Be professional and technical\n"
+        "6. Repeat, it is extremely important that you do not change, add or remove any code"
     )
     
-    try:
-        response = ollama.generate(
-            model=model,
-            prompt=prompt,
-            options={'temperature': 0.1}
-        )
-        return response['response'].strip()
-    except Exception as e:
-        print(f"Ollama processing error: {e}")
-        return content
-
-def chunk_file(content, max_chars=3000):
-    """Split content into chunks respecting line boundaries."""
-    chunks = []
-    current_chunk = []
-    current_length = 0
-
-    for line in content.splitlines(keepends=True):
-        line_length = len(line)
-        if current_length + line_length > max_chars and current_chunk:
-            chunks.append(''.join(current_chunk))
-            current_chunk = []
-            current_length = 0
-        current_chunk.append(line)
-        current_length += line_length
-
-    if current_chunk:
-        chunks.append(''.join(current_chunk))
-
-    return chunks
-
-def process_file(filepath, model="devtral"):
-    """Process a single file through Ollama for commenting."""
-    print(f"Processing: {filepath}")
+    prompt = f"Add inline comments to this {file_extension.upper()} code without changing any code:\n\n{code}"
     
-    # Read file content
-    try:
-        with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read()
-    except UnicodeDecodeError:
-        print(f"  Warning: Binary file detected. Skipping {filepath}")
-        return None
-
-    # Process in chunks if needed
-    chunks = chunk_file(content) if len(content) > 3000 else [content]
-    processed_chunks = []
-
-    for i, chunk in enumerate(chunks, 1):
-        print(f"  Processing chunk {i}/{len(chunks)}")
-        processed_chunks.append(process_with_ollama(chunk, model))
-
-    result = ''.join(processed_chunks)
-
-    # Write output
-    output_path = filepath.with_suffix(filepath.suffix + '.commented')
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(result)
-    
-    print(f"  Created: {output_path}")
-    return output_path
-
-def main():
-    parser = argparse.ArgumentParser(description='Add comments to source files using Ollama')
-    parser.add_argument('directory', help='Directory to process')
-    parser.add_argument('--model', default='devtral', help='Ollama model to use')
-    parser.add_argument('--ext', action='append', help='Additional file extensions to process')
-    args = parser.parse_args()
-
-    # Supported file extensions
-    extensions = {
-        '.c', '.h', '.cpp', '.hpp', '.py', '.java', 
-        '.js', '.ts', '.html', '.css', '.php', '.rb',
-        '.go', '.rs', '.swift', '.kt', '.m', '.cs'
+    payload = {
+        "model": model_name,
+        "system": system_prompt,
+        "prompt": prompt,
+        "stream": False,
+        "options": {"temperature": 0.2}
     }
     
-    # Add custom extensions if provided
-    if args.ext:
-        for ext in args.ext:
-            extensions.add(ext.lower())
+    try:
+        response = requests.post(
+            "http://localhost:11434/api/generate",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(payload)
+        )
+        response.raise_for_status()
+        return response.json()["response"]
+    except requests.exceptions.RequestException as e:
+        print(f"Ollama API error: {e}")
+        exit(1)
 
-    processed_files = []
-    for root, _, files in os.walk(args.directory):
-        for file in files:
-            path = Path(root) / file
-            if path.suffix.lower() in extensions and is_text_file(path):
-                try:
-                    output = process_file(path, args.model)
-                    if output:
-                        processed_files.append((path, output))
-                except Exception as e:
-                    print(f"Failed to process {path}: {str(e)}")
+def save_output(original_path, commented_code):
+    base_name = os.path.splitext(original_path)[0]
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    output_path = f"{base_name}_commented_{timestamp}{os.path.splitext(original_path)[1]}"
+    
+    try:
+        with open(output_path, 'w') as file:
+            file.write(commented_code)
+        print(f"Success! Commented code saved to: {output_path}")
+    except Exception as e:
+        print(f"Error saving file: {e}")
+        exit(1)
 
-    print("\nProcessing complete. Modified files:")
-    for original, modified in processed_files:
-        print(f"  {original} -> {modified}")
+def main():
+    parser = argparse.ArgumentParser(description="Code Commenter using Ollama with deepseek-coder-v2")
+    parser.add_argument("file", help="Path to code file (.c, .py, .js, .java, etc.)")
+    parser.add_argument("-m", "--model", default="deepseek-coder-v2:16b", 
+                        help="Ollama model name (default: deepseek-coder-v2:16b)")
+    
+    args = parser.parse_args()
+    
+    if not check_model_available(args.model):
+        print(f"Model '{args.model}' not found. Install with: ollama pull {args.model}")
+        exit(1)
+
+    if not os.path.exists(args.file):
+        print(f"Error: File not found - {args.file}")
+        exit(1)
+    
+    file_ext = os.path.splitext(args.file)[1][1:]
+    
+    code = read_file(args.file)
+    
+    print("Generating comments... (This may take a moment)")
+    commented_code = generate_comments(code, args.model, file_ext)
+    
+    save_output(args.file, commented_code)
 
 if __name__ == "__main__":
-    mimetypes.init()  # Initialize MIME type database
     main()
