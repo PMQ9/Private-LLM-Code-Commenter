@@ -14,6 +14,7 @@ Then this is the tool for you.
 
 👉 Automatically generate documentation (README and code comments) for source code using a local LLM (Deepseek, Qwen, Devstral). 
 
+<img src="doc/file_commenter_illustration.png" alt="Alt Text" width="100%"/>
 
 **Key Features**
 
