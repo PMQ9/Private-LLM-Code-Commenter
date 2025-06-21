@@ -41,7 +41,6 @@ def generate_comments(code, model_name, file_extension):
     )
     
     prompt = f"Add inline comments to this {file_extension.upper()} code without changing any code:\n\n{code}"
-    
     payload = {
         "model": model_name,
         "system": system_prompt,
@@ -66,7 +65,6 @@ def save_output(original_path, commented_code):
     base_name = os.path.splitext(original_path)[0]
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     output_path = f"{base_name}_commented_{timestamp}{os.path.splitext(original_path)[1]}"
-    
     try:
         with open(output_path, 'w') as file:
             file.write(commented_code)

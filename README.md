@@ -40,7 +40,8 @@ Then this is the tool for you.
 - `ollama serve` this will run Ollama on `localhost:11434`, allowing API access.
 
 **Step 2:**
-- `python src/modules/ollama_commenter/ollama_commenter.py /path/to/code --model model_name`
+- `python ollama_commenter.py /path/to/code --model model_name`
+- `python source_code_handler.py /path/to/project`
 
 ## Perfomance comparison
 
@@ -48,23 +49,25 @@ Below are some models that was tested and evaluated.
 
 **Note:**
 - Some comparison criteria are subjective, one developer might consider a comment too detailed, while another developer might consider that same comment too oversimplified. 
-- Larger models will yield higher perfomance, but will requires more computation resources. Some models will requires at least 200+ GB of RAM or they outright refuses to start. Pick the one that your machine can run.
+- Larger models will yield higher perfomance, but will requires more computation resources. Some models will requires at least 120+ GB of RAM or they outright refuses to start.
 
 ### Comparison 
 
-| Model                     | Code Understanding | Comment Quality | Latency | VRAM Uasge |
-|---------------------------|--------------------|-----------------|---------|------------|
-| Deepseek-R1:70b           |                    |                 |         |            |
-| Deepseek-R1:8b            |                    |                 |         |            |
-| Devstral:24b              |                    |                 |         |            |
-| Qwen2.5-coder:32b         |                    |                 |         |            |
-| Codellama:70b             |                    |                 |         |            |
-| Deepseek-coder-v2:16b     |                    |                 |         |            |
-| Web-based Deekseek        |                    |                 | NA      | NA         |
-| Web-based ChatGPT         |                    |                 | NA      | NA         |
-| Web-based Grok            |                    |                 | NA      | NA         |
+Each models were tested with 10 programs. Code Understanding and Comment Quality is **my subjective evaluation**
 
-Code Understanding and Comment Quality is my subjective evaluation
+| Model                     | Code Understanding | Comment Quality | Throughput | VRAM Uasge | Limits                                   |
+|---------------------------|--------------------|-----------------|------------|------------|------------------------------------------|
+| Deepseek-R1:70b           |                    |                 |            |            |                                          |
+| Deepseek-R1:8b            |                    |                 |            |            |                                          |
+| Devstral:24b              |                    |                 |            |            |                                          |
+| Qwen2.5-coder:32b         |                    |                 |            |            |                                          |
+| Codellama:70b             |                    |                 |            |            |                                          |
+| Deepseek-coder-v2:16b     | 4/5                | 4/5             |            | 2.6 GB     | Struggles with files over ~120 lines     |
+| Web-based Deekseek        |                    |                 | NA         | NA         |                                          |
+| Web-based ChatGPT         |                    |                 | NA         | NA         |                                          |
+| Web-based Grok            |                    |                 | NA         | NA         |                                          |
+
+
 
 Also compare the performance against 3 popular web-based LLM: Deepseek, ChatGPT and Grok.
 
