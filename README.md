@@ -58,9 +58,9 @@ Then this is the tool for you.
 
 https://github.com/user-attachments/assets/e45919ac-2482-4127-8557-151c182ee706
 
-**Directory comment generation**
+**Directory README explanation generation**
 
-(TBD)
+https://github.com/user-attachments/assets/890d5da0-7408-4dd8-ab6d-29047bf96499
 
 ## Perfomance comparison
 
