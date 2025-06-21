@@ -56,7 +56,7 @@ Then this is the tool for you.
 
 **Directory comment generation**
 
-
+[![Watch the video](https://img.youtube.com/vi/Sgx2-aTQ_6s/0.jpg)](https://youtu.be/Sg2-aTQ_6s)
 
 **Directory comment generation**
 
