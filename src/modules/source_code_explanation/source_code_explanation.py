@@ -48,8 +48,8 @@ def check_model_available(model_name):
 def generate_explanation(code, model_name, language):
     """Generate an explanation of the code using Ollama."""
     system_prompt = (
-        "You are a code analyst. Your task is to provide a brief explanation of what the following code does. "
-        "Focus on the main functionality and purpose of the code."
+        "You are a code analyst. Your task is to provide a very brief explanation of what the following code does. "
+        "Focus on the main functionality and purpose of the code. Again, very brief."
     )
     prompt = f"Explain what this {language} code does:\n\n{code}"
     payload = {
