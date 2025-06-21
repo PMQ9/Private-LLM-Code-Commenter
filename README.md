@@ -28,6 +28,7 @@ Then this is the tool for you.
 1. Ollama installed
     - Download from the official Ollama site: https://ollama.com/download
     - Python library: `pip install ollama`
+    - `pip install request`
 2. PC requirement
     - The specific PC requirements will depends on the model of your choice. Please refer to specific Ollama models for their requirements: https://ollama.com/search
 
