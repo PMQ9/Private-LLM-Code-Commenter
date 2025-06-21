@@ -74,7 +74,7 @@ def save_output(original_path, commented_code):
         exit(1)
 
 def main():
-    parser = argparse.ArgumentParser(description="Code Commenter using Ollama with deepseek-coder-v2")
+    parser = argparse.ArgumentParser(description="Code Commenter using Ollama")
     parser.add_argument("file", help="Path to code file (.c, .py, .js, .java, etc.)")
     parser.add_argument("-m", "--model", default="deepseek-coder-v2:16b", 
                         help="Ollama model name (default: deepseek-coder-v2:16b)")

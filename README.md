@@ -40,8 +40,12 @@ Then this is the tool for you.
 - `ollama serve` this will run Ollama on `localhost:11434`, allowing API access.
 
 **Step 2:**
-- `python ollama_commenter.py /path/to/code --model model_name`
-- `python source_code_handler.py /path/to/project`
+
+**For single file comment generation**
+- `.\file_commenter.bat /path/to/file -m model_name`
+
+**For directory comment generation**
+- `.\file_commenter.bat /path/to/code -m model_name`
 
 ## Perfomance comparison
 
