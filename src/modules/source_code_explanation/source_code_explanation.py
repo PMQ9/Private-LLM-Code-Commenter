@@ -17,13 +17,21 @@ extension_to_language = {
     '.rb': 'Ruby',
 }
 
-def find_source_files(root_dir, extensions):
-    """Recursively find all files in root_dir with the specified extensions."""
+def find_source_files(input_path, extensions):
+    """Find source files based on input path (file or directory) with specified extensions."""
     source_files = []
-    for dirpath, _, filenames in os.walk(root_dir):
-        for filename in filenames:
-            if any(filename.endswith(ext) for ext in extensions):
-                source_files.append(os.path.abspath(os.path.join(dirpath, filename)))
+    input_path = os.path.abspath(input_path)
+    
+    if os.path.isfile(input_path):
+        # If input is a file, check if it has a valid extension
+        if any(input_path.endswith(ext) for ext in extensions):
+            source_files.append(input_path)
+    elif os.path.isdir(input_path):
+        # If input is a directory, recursively find files with matching extensions
+        for dirpath, _, filenames in os.walk(input_path):
+            for filename in filenames:
+                if any(filename.endswith(ext) for ext in extensions):
+                    source_files.append(os.path.abspath(os.path.join(dirpath, filename)))
     return source_files
 
 def check_ollama_available():
@@ -74,7 +82,7 @@ def generate_explanation(code, model_name, language):
 def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate explanations for source code files using Ollama")
-    parser.add_argument("root_dir", help="Root directory to search for source files")
+    parser.add_argument("input_path", help="Path to a source file or directory to search for source files")
     parser.add_argument("-e", "--extensions", nargs='+', default=['.py', '.c', '.cpp', '.java', '.js'],
                         help="List of file extensions to process (e.g., .py .js)")
     parser.add_argument("-m", "--model", default="deepseek-coder-v2:16b",
@@ -94,17 +102,18 @@ def main():
         exit(1)
     
     # Find source files
-    source_files = find_source_files(args.root_dir, args.extensions)
+    source_files = find_source_files(args.input_path, args.extensions)
     
     if not source_files:
         print("No source files found with the specified extensions.")
         return
     
-    print(f"Found {len(source_files)} source files to process.")
+    print(f"Found {len(source_files)} source file(s) to process.")
     
     explanations = []
     
     # Process each source file
+    base_path = os.path.dirname(args.input_path) if os.path.isfile(args.input_path) else args.input_path
     for file in tqdm(source_files, desc="Processing files"):
         ext = os.path.splitext(file)[1]
         if ext not in extension_to_language:
@@ -119,7 +128,7 @@ def main():
             continue
         explanation = generate_explanation(code, args.model, language)
         if explanation is not None:
-            rel_path = os.path.relpath(file, args.root_dir)
+            rel_path = os.path.relpath(file, base_path)
             explanations.append((rel_path, explanation))
         else:
             print(f"Failed to generate explanation for {file}")
