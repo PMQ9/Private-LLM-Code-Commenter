@@ -26,6 +26,7 @@ def main():
                         help="List of file extensions to process (e.g., .py .js)")
     parser.add_argument("-s", "--script", default=default_script_path,
                         help="Path to ollama_commenter.py script")
+    parser.add_argument("-m", "--model", help="Ollama model name to use in ollama_commenter.py")
     
     args = parser.parse_args()
     
@@ -49,7 +50,12 @@ def main():
     for file in source_files:
         print(f"Processing {file}...")
         try:
-            subprocess.run([sys.executable, args.script, file], check=True)
+            # Construct the command with optional model argument
+            command = [sys.executable, args.script]
+            if args.model:
+                command.extend(["-m", args.model])
+            command.append(file)
+            subprocess.run(command, check=True)
             print(f"Successfully processed {file}")
         except subprocess.CalledProcessError as e:
             print(f"Error processing {file}: {e}")
