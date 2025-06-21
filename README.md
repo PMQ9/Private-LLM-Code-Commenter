@@ -46,7 +46,21 @@ Then this is the tool for you.
 - `.\file_commenter.bat /path/to/file -m model_name`
 
 **For directory comment generation**
-- `.\file_commenter.bat /path/to/code -m model_name`
+- `.\path_commenter.bat /path/to/code -m model_name`
+
+**For directory README explanation generation**
+
+- `.\path_explainer.bat /path/to/code -m model_name`
+
+## Demo 
+
+**Directory comment generation**
+
+https://github.com/user-attachments/assets/e45919ac-2482-4127-8557-151c182ee706
+
+**Directory README explanation generation**
+
+https://github.com/user-attachments/assets/890d5da0-7408-4dd8-ab6d-29047bf96499
 
 ## Perfomance comparison
 
