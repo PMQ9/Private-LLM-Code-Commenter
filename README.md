@@ -56,11 +56,11 @@ Then this is the tool for you.
 
 **Directory comment generation**
 
-![Video](./path_commenter_demo.mp4)
+
 
 **Directory comment generation**
 
-
+(TBD)
 
 ## Perfomance comparison
 
