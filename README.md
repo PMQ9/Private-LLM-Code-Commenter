@@ -77,23 +77,24 @@ Below are some models that was tested and evaluated.
 
 ### Comparison 
 
-Each models were tested with 10 programs. Code Understanding and Comment Quality is **my subjective evaluation**
+Each models were tested with 15 programs. Code Understanding and Comment Quality is **my subjective evaluation**
 
-| Model                     | Code Understanding | Comment Quality | Throughput | VRAM Uasge | Limitation                               |
-|---------------------------|--------------------|-----------------|------------|------------|------------------------------------------|
-| Deepseek-R1:70b           |                    |                 |            |            |                                          |
-| Deepseek-R1:8b            |                    |                 |            |            |                                          |
-| Devstral:24b              |                    |                 |            |            |                                          |
-| Qwen2.5-coder:32b         |                    |                 |            |            |                                          |
-| Codellama:70b             |                    |                 |            |            |                                          |
-| Deepseek-coder-v2:16b     | 4/5                | 4/5             |            | 2.6 GB     | Files > 120 lines                        |
-| Web-based Deekseek        |                    |                 | NA         | NA         |                                          |
-| Web-based ChatGPT         |                    |                 | NA         | NA         |                                          |
-| Web-based Grok            |                    |                 | NA         | NA         |                                          |
+| Model                     | Code Understanding | Comment Quality | Memory Usage | Limitation                       |
+|---------------------------|--------------------|-----------------|--------------|----------------------------------|
+| Deepseek-R1:70b           | 4.5                | 5/5             | 42.3 GiB     | Unstable with large files        |
+| Codellama:70b             | 0/5                | 0/5             | 38.8 GiB     | Did not understand the prompt    |
+| Qwen2.5-coder:32b         | 4.5/5              | 2.5/5           | 21 GiB       |                                  |
+| Devstral:24b              | 4/5                | 2/5             | 15.4 GiB     | 200+ lines                       |
+| Deepseek-coder-v2:16b     | 4.5/5              | 4.5/5           | 10.4 GiB     | 120+ lines                       |
+| Deepseek-R1:8b            | 0/5                | 0/5             | 6.4 GiB      | Did not understand the codes     |
+| Web-based Deekseek        | 5/5                | 5/5             | NA           |                                  |
+| Web-based ChatGPT         | 4.5/5              | 4/5             | NA           | limited uses with free tier      |
 
+Also compared the performance against 2 popular web-based LLM: Deepseek and ChatGPT.
 
+### Chosen default model
 
-Also compare the performance against 3 popular web-based LLM: Deepseek, ChatGPT and Grok.
+Based on subjective testing, **Deepseek-coder-v2:16b** is chosen as the default model as it strikes a good balance between hardware requirements and overall performance.
 
 ### Criteria explanation
 
@@ -107,4 +108,3 @@ Also compare the performance against 3 popular web-based LLM: Deepseek, ChatGPT 
 - Conciseness: Avoids verbosity while being informative (measure comment-to-code ratio)
 - Relevance: Focuses on non-obvious aspects (e.g., explains why more than what)
 - Formatting: Proper syntax, placement, and structure for the language
-
