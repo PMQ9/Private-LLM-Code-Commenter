@@ -22,7 +22,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Batch process source files with ollama_commenter.py")
     parser.add_argument("root_dir", help="Root directory to search for source files")
-    parser.add_argument("-e", "--extensions", nargs='+', default=['.py', '.c', '.cpp', '.java', '.js'],
+    parser.add_argument("-e", "--extensions", nargs='+', default=['.py', '.c', '.cpp', '.java', '.js', '.rs'],
                         help="List of file extensions to process (e.g., .py .js)")
     parser.add_argument("-s", "--script", default=default_script_path,
                         help="Path to ollama_commenter.py script")
