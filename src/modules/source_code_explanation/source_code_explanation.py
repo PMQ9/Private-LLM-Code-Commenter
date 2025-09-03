@@ -15,6 +15,7 @@ extension_to_language = {
     '.ts': 'TypeScript',
     '.go': 'Go',
     '.rb': 'Ruby',
+    '.rs': 'Rust',
 }
 
 def find_source_files(input_path, extensions):
