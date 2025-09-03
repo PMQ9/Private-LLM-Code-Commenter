@@ -84,7 +84,7 @@ def main():
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Generate explanations for source code files using Ollama")
     parser.add_argument("input_path", help="Path to a source file or directory to search for source files")
-    parser.add_argument("-e", "--extensions", nargs='+', default=['.py', '.c', '.cpp', '.java', '.js'],
+    parser.add_argument("-e", "--extensions", nargs='+', default=['.py', '.c', '.cpp', '.java', '.js', '.rs'],
                         help="List of file extensions to process (e.g., .py .js)")
     parser.add_argument("-m", "--model", default="deepseek-coder-v2:16b",
                         help="Ollama model name (default: deepseek-coder-v2:16b)")
